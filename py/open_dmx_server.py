@@ -15,7 +15,8 @@ class DMXUniverse:
             device: The device (TTY or COM port) that represents the Enttec OpenDMX
             tcp_port: The TCP port on which to listen for data
         """
-        # Initialize the serial port 
+        # Initialize the serial port
+        self.port = None
         self.port = serial.Serial(port=device,
                                   baudrate=250000,
                                   parity='N',
@@ -31,7 +32,8 @@ class DMXUniverse:
         self.socket.bind(('', tcp_port))
 
     def __del__(self):
-        self.port.close()
+        if self.port:
+            self.port.close()
 
     def run(self):
         """ Wait for packets and forward them to the DMX interface """
@@ -76,7 +78,7 @@ def run():
                     prog='DMX server',
                     description='This is a simple python server that listens to TCP connections and'
                                 'forwards the data to a DMX interface (Enttec OpenDMX USB).')
-    parser.add_argument('-d', '--device', type=str, default='/dev/tty.usbserial-B000DG3M')
+    parser.add_argument('-d', '--device', type=str, default='/dev/ttyUSB0')
     parser.add_argument('-p', '--port', type=int, default=5419)
     args = parser.parse_args()
 

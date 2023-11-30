@@ -22,7 +22,7 @@ public class DmxExample {
     // Returns true if the connection was successful.
     public static Boolean connect(String hostname, int port) {
         try {
-            socket = new Socket("localhost", 5419);
+            socket = new Socket(hostname, port);
         } catch (ConnectException e) {
             System.out.println("Could not connect to server " + hostname + ":" + port + ". Is the server running?");
             return false;
@@ -72,17 +72,22 @@ public class DmxExample {
     
     /*
      * Now is the actual useful fun code
+     * 
+     * Each DMX universe has 512 channels. Each channel is a byte,
+     * and it can have different meanings.
+     * Usually a device (light/dimmer/...) will use a few channels, starting at a given channel.
+     * The following example is for a light that uses 11 channels, starting at channel 1 (index 0 in the array).
      */
 
     public static void main(String[] args) {
-        if (!connect("localhost", 5419)) {
+        if (!connect("dmxhub.local", 5419)) {
             return;
         }
         byte[] data = new byte[512];
         data[0]  = (byte) 0;   // Pan
         data[1]  = (byte) 0;   // Tilt
         data[2]  = (byte) 0;   // Pan/Tilt speed (0 fastest -> 255 slowest)
-        data[3]  = (byte) 32;  // Global dimmer (0 off -> 255 full brighness)
+        data[3]  = (byte) 255;  // Global dimmer (0 off -> 255 full brighness)
         data[4]  = (byte) 0;   // Strobe (0 off, 1 slow -> 255 fast)
         data[5]  = (byte) 0;   // Red
         data[6]  = (byte) 0;   // Green
